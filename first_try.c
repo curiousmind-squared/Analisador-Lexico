@@ -89,7 +89,7 @@ int main() {
 	
 	token = proximo_token();	
 	printf("%d, %d\n", token.nome_atributo, token.atributo);
-	printf("Alteração para teste com git");
+	printf("Alteração para teste com git\nMais uma alteração");
 	free(code);
 	return 0;
 }
