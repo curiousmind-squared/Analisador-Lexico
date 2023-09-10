@@ -59,7 +59,16 @@ Token proximo_token() {
 		{
 			case 0:
 				c = code[cont_sim_lido];
+				
+				// TODO: Add teste para c == ' ' e c == '\n'
+
 				if (c == '>') estado = 1;
+				else if (c == '=') estado = 5;
+				else if (c == '<') estado = 6;
+
+				// TODO: Add estado para falhar
+				
+				break;
 
 			case 1:
 				cont_sim_lido++;
@@ -74,7 +83,14 @@ Token proximo_token() {
 				estado = 0;
 				return (token);
 				break;
-
+			case 5:
+				cont_sim_lido++;
+				printf("<relop, EQ>\n");
+				token.nome_atributo = RELOP;
+				token.atributo = EQ;
+				estado = 0;
+				return (token);
+				break;
 		}
 	}
 
