@@ -72,9 +72,12 @@ Token proximo_token() {
 
 			case 1:
 				cont_sim_lido++;
+				
 				c = code[cont_sim_lido];
 
 				if (c == '=') estado = 2;
+				// TODO: add estado para ir caso não seja '='
+				
 			case 2:
 				cont_sim_lido++;
 				printf("<relop, LE>\n");
@@ -91,6 +94,22 @@ Token proximo_token() {
 				estado = 0;
 				return (token);
 				break;
+			case 6:
+				cont_sim_lido++;
+				
+				c = code[cont_sim_lido];
+
+				if (c == '=') estado = 7;
+				// TODO: add estado para ir caso não seja '='
+				break;
+			case 7:
+				cont_sim_lido++;
+				printf("<relop, GE>\n");
+				token.nome_atributo = RELOP;
+				token.atributo = GE;
+				estado = 0;
+				return (token);
+				break;
 		}
 	}
 
@@ -104,7 +123,8 @@ int main() {
 	code = readFile("teste.txt");
 	
 	token = proximo_token();	
-	printf("%d, %d\n", token.nome_atributo, token.atributo);
+
 	free(code);
+
 	return 0;
 }
