@@ -62,9 +62,9 @@ Token proximo_token() {
 				
 				// TODO: Add teste para c == ' ' e c == '\n'
 
-				if (c == '>') estado = 1;
+				if (c == '<') estado = 1;
 				else if (c == '=') estado = 5;
-				else if (c == '<') estado = 6;
+				else if (c == '>') estado = 6;
 
 				else if (c == '~') estado = 30; // NOTE: Adição minha
 
