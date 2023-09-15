@@ -1,3 +1,11 @@
+#!/bin/bash
+
+if [ $# -ne 1 ]; then
+    echo "Faltando um argumento"
+    echo "Usage: $0 <argument>"
+    exit 1
+fi
+
 echo "$1" > src.txt
 
 echo "Source code: "
