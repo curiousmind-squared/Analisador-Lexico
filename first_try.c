@@ -78,7 +78,8 @@ Token proximo_token() {
 				c = code[cont_sim_lido];
 
 				if (c == '=') estado = 2;
-				// TODO: add estado para ir caso não seja '='
+				else estado = 4;
+				break;
 				
 			case 2:
 				cont_sim_lido++;
@@ -98,6 +99,15 @@ Token proximo_token() {
 				return (token);
 				break;
 
+			case 4:
+				cont_sim_lido++;
+				printf("<relop, LT>\n");
+				token.nome_atributo = RELOP;
+				token.atributo = LT;
+				estado = 0;
+				return (token);
+				break;
+
 			case 5:
 				cont_sim_lido++;
 				printf("<relop, EQ>\n");
@@ -112,7 +122,7 @@ Token proximo_token() {
 				c = code[cont_sim_lido];
 
 				if (c == '=') estado = 7;
-				// TODO: add estado para ir caso não seja '='
+				else estado = 8;
 				break;
 			case 7:
 				cont_sim_lido++;
@@ -122,9 +132,16 @@ Token proximo_token() {
 				estado = 0;
 				return (token);
 				break;
+			case 8:
+				cont_sim_lido++;
+				printf("<relop, GT>\n");
+				token.nome_atributo = RELOP;
+				token.atributo = GT;
+				estado = 0;
+				return (token);
+				break;
 
-
-			
+							
 			// Está mais separado do resto do código porque é uma adição minha	
 			case 30:
 				cont_sim_lido++;
@@ -143,7 +160,7 @@ Token proximo_token() {
 int main() {
 	Token token;
 	
-	code = readFile("teste.txt");
+	code = readFile("src.txt"); //TODO: Esse arquivo deve ser passado como parâmetro 
 	
 	token = proximo_token();	
 
