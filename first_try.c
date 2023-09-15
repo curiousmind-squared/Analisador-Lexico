@@ -60,7 +60,11 @@ Token proximo_token() {
 			case 0:
 				c = code[cont_sim_lido];
 				
-				// TODO: Add teste para c == ' ' e c == '\n'
+				if ((c == ' ')||(c == '\n'))
+				{
+					estado=0;
+					cont_sim_lido++;
+				}
 
 				if (c == '<') estado = 1;
 				else if (c == '=') estado = 5;
@@ -153,6 +157,9 @@ Token proximo_token() {
 		}
 	}
 
+ 	// Imagino que essa inicialização seja para possíveis erros
+	token.nome_atributo = EOF;
+	token.atributo = -1;
 	return token;
 }
 
