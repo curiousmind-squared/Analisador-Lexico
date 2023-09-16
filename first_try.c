@@ -70,7 +70,7 @@ Token proximo_token() {
 				else if (c == '=') estado = 5;
 				else if (c == '>') estado = 6;
 
-				else if (c == '~') estado = 30; // NOTE: Adição minha
+				else if (c == '~') estado = 3; // NOTE: Adição minha
 
 				// TODO: Add estado para falhar
 				
@@ -96,11 +96,14 @@ Token proximo_token() {
 
 			case 3:
 				cont_sim_lido++;
-				printf("<relop, NE>\n");
-				token.nome_atributo = RELOP;
-				token.atributo = NE;
-				estado = 0;
-				return (token);
+				c = code[cont_sim_lido];
+				if (c == '=') {
+					printf("<relop, NE>\n");
+					token.nome_atributo = RELOP;
+					token.atributo = NE;
+					estado = 0;
+					return (token);
+				}
 				break;
 
 			case 4:
@@ -126,9 +129,10 @@ Token proximo_token() {
 					printf("<relop, EQ>\n");
 					token.nome_atributo = RELOP;
 					token.atributo = EQ;
-					estado=0;
+					//estado=0;
 					return (token);
 				}
+				estado=0;
 				break;
 			case 6:
 				cont_sim_lido++;
@@ -156,14 +160,6 @@ Token proximo_token() {
 				break;
 
 							
-			// Está mais separado do resto do código porque é uma adição minha	
-			case 30:
-				cont_sim_lido++;
-				 
-				c = code[cont_sim_lido];
-
-				if (c == '=') estado = 3;
-				break;
 		}
 	}
 
