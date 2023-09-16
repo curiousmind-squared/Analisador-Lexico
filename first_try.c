@@ -112,13 +112,23 @@ Token proximo_token() {
 				return (token);
 				break;
 
-			case 5:
+			case 5: // FIXME: EQ deve ser '==', estamos reconhecendo apenas '='
 				cont_sim_lido++;
-				printf("<relop, EQ>\n");
-				token.nome_atributo = RELOP;
-				token.atributo = EQ;
-				estado = 0;
-				return (token);
+				//printf("<relop, EQ>\n");
+				//token.nome_atributo = RELOP;
+				//token.atributo = EQ;
+				//estado = 0;
+				//return (token);
+				//break;
+				c = code[cont_sim_lido];
+				// TODO: Imagino que isso não esteja certo, está um pouco confuso
+				if (c == '=') {
+					printf("<relop, EQ>\n");
+					token.nome_atributo = RELOP;
+					token.atributo = EQ;
+					estado=0;
+					return (token);
+				}
 				break;
 			case 6:
 				cont_sim_lido++;
@@ -169,7 +179,8 @@ int main() {
 	
 	code = readFile("src.txt"); //TODO: Esse arquivo deve ser passado como parâmetro 
 	
-	token = proximo_token();	
+	while (code[cont_sim_lido] != '\0')
+		token = proximo_token();	
 
 	free(code);
 
