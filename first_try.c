@@ -129,10 +129,10 @@ Token proximo_token() {
 					printf("<relop, EQ>\n");
 					token.nome_atributo = RELOP;
 					token.atributo = EQ;
-					//estado=0;
+					//estado=0; // Isso estava causando um bug
 					return (token);
 				}
-				estado=0;
+				estado=0; // Por isso isso veio para cá
 				break;
 			case 6:
 				cont_sim_lido++;
