@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
+
 
 // TOKENS
 #define IF 256;
@@ -66,7 +68,8 @@ Token proximo_token() {
 					cont_sim_lido++;
 				}
 
-				if (c == '<') estado = 1;
+				if (isalpha(c)) estado = 9;
+				else if (c == '<') estado = 1;
 				else if (c == '=') estado = 5;
 				else if (c == '>') estado = 6;
 
@@ -158,8 +161,19 @@ Token proximo_token() {
 				estado = 0;
 				return (token);
 				break;
-
-							
+			case 9:
+				cont_sim_lido++;
+				c = code[cont_sim_lido];
+				while ((c == ' ')||(c == '\n')) { // TODO: Temos também que checar se 'c' é diferente de um comentário ou do final de arquivo
+					cont_sim_lido++;
+					c = code[cont_sim_lido];
+				}
+				printf("<ID, (posição na tabela de símbolos)>\n");
+				token.nome_atributo = ID;
+				token.atributo = 0; // TODO: Aqui será a posição na tabela de símbolos
+				estado=0;
+				return (token);
+				break;							
 		}
 	}
 
