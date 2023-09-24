@@ -1,21 +1,25 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
+
 
 // TOKENS
-#define IF 256;
-#define THEN 257;
-#define ELSE 258;
-#define RELOP 259;
-#define ID 260;
-#define NUM 261;
+#define IF 256
+#define THEN 257
+#define ELSE 258
+#define RELOP 259
+#define ID 260
+#define NUM 261
 
 // ATRIBUTOS
-#define LT 262;
-#define LE 263;
-#define EQ 264;
-#define NE 265;
-#define GT 266;
-#define GE 267;
+#define LT 262
+#define LE 263
+#define EQ 264
+#define NE 265
+#define GT 266
+#define GE 267
+
+#define IDSIZE 20 // TODO: Por que diabos quando bota ';' essa porcaria para de funcionar??? não faz sentido
 
 typedef struct {
 	int nome_atributo;
@@ -54,6 +58,10 @@ Token proximo_token() {
 	Token token;
 	char c;
 
+ 	// Imagino que é preciso criar um array para ir armazenando os dados
+	char id_str[IDSIZE];
+	int p_id;
+
 	while (code[cont_sim_lido] != '\0'){
 		switch (estado)
 		{
@@ -66,7 +74,12 @@ Token proximo_token() {
 					cont_sim_lido++;
 				}
 
-				if (c == '<') estado = 1;
+				if (isalpha(c)) { 
+					p_id = 0; // Primeira posição do char
+					id_str[p_id] = c;
+					estado = 9;
+				}
+				else if (c == '<') estado = 1;
 				else if (c == '=') estado = 5;
 				else if (c == '>') estado = 6;
 
@@ -115,14 +128,8 @@ Token proximo_token() {
 				return (token);
 				break;
 
-			case 5: // FIXME: EQ deve ser '==', estamos reconhecendo apenas '='
+			case 5: 
 				cont_sim_lido++;
-				//printf("<relop, EQ>\n");
-				//token.nome_atributo = RELOP;
-				//token.atributo = EQ;
-				//estado = 0;
-				//return (token);
-				//break;
 				c = code[cont_sim_lido];
 				// TODO: Imagino que isso não esteja certo, está um pouco confuso
 				if (c == '=') {
@@ -158,8 +165,31 @@ Token proximo_token() {
 				estado = 0;
 				return (token);
 				break;
+			case 9:
+				cont_sim_lido++;
+				c = code[cont_sim_lido];
+				if (c == '\n' || c == ' ')
+					estado = 10;
+				else {
+					p_id++;
+					id_str[p_id] = c;
+					estado = 9;
+				}
+				break;
 
-							
+			case 10:
+				// Algumas ações devem ser tomadas
+				p_id++;
+				id_str[p_id] = '\0';
+				// printf("A string é: %s\n", id_str); // Tudo parece estar funcionando
+
+				printf("<ID, (posição na tabela de símbolos)>\n");
+				token.nome_atributo = ID;
+				token.atributo = 0; // TODO: Aqui será a posição na tabela de símbolos
+				estado=0;
+				return (token);
+				break;							
+				
 		}
 	}
 
