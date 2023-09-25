@@ -19,6 +19,8 @@
 #define GT 266
 #define GE 267
 
+#define TWODOTS 268
+
 #define IDSIZE 20 // TODO: Por que diabos quando bota ';' essa porcaria para de funcionar??? não faz sentido
 
 typedef struct {
@@ -83,6 +85,18 @@ Token proximo_token() {
 				else if (c == '=') estado = 5;
 				else if (c == '>') estado = 6;
 
+				else if (c == '(') estado = 11;
+				else if (c == ')') estado = 12;
+				else if (c == '[') estado = 13;
+				else if (c == ']') estado = 14;
+				else if (c == '{') estado = 15;
+				else if (c == '}') estado = 16;
+				
+				else if (c == ';') estado = 17;
+				else if (c == ':') estado = 18;
+				else if (c == ',') estado = 19;
+				else if (c == '.') estado = 20; // Aqui tem que ficar esperto por é um pouco diferente
+
 				else if (c == '~') estado = 3; // NOTE: Adição minha
 
 				// TODO: Add estado para falhar
@@ -131,7 +145,7 @@ Token proximo_token() {
 			case 5: 
 				cont_sim_lido++;
 				c = code[cont_sim_lido];
-				// TODO: Imagino que isso não esteja certo, está um pouco confuso
+				// TODO: Isso está certo, porém esse 'if' deve virar um estado novo
 				if (c == '=') {
 					printf("<relop, EQ>\n");
 					token.nome_atributo = RELOP;
@@ -189,7 +203,89 @@ Token proximo_token() {
 				estado=0;
 				return (token);
 				break;							
+			case 11:
+				cont_sim_lido++;
+				printf("<(>\n");
+				token.nome_atributo = c;
+				estado=0;
+				return (token);
+				break;
+			case 12:
+				cont_sim_lido++;
+				printf("<)>\n");
+				token.nome_atributo = c;
+				estado=0;
+				return (token);
+				break;
+			case 13:
+				cont_sim_lido++;
+				printf("<[>\n");
+				token.nome_atributo = c;
+				estado = 0;
+				return (token);
+				break;
 				
+			case 14:
+				cont_sim_lido++;
+				printf("<]>\n");
+				token.nome_atributo = c;
+				estado = 0;
+				return (token);
+				break;
+			case 15: 
+				cont_sim_lido++;
+				printf("<{>\n");
+				token.nome_atributo = c;
+				estado = 0;
+				return (token);
+				break;
+			case 16:
+				cont_sim_lido++;
+				printf("<}>\n");
+				token.nome_atributo = c;
+				estado = 0;
+				return (token);
+				break;
+			case 17:
+				cont_sim_lido++;
+				printf("<;>\n");
+				token.nome_atributo = c;
+				estado = 0;
+				return (token);
+				break;
+			case 18:
+				cont_sim_lido++;
+				printf("<:>\n");
+				token.nome_atributo = c;
+				estado = 0;
+				return (token);
+				break;
+			case 19:
+				cont_sim_lido++;
+				printf("<,>\n");
+				token.nome_atributo = c;
+				estado = 0;
+				return (token);
+				break;
+			case 20:
+				cont_sim_lido++;
+				char d;
+				d = code[cont_sim_lido];
+				if (d == '.') estado = 21;
+				else {
+					printf("<.>\n");
+					token.nome_atributo = c;
+			        	estado = 0;
+					return (token);
+				}
+				break;
+			case 21:
+				cont_sim_lido++;
+				printf("<..>\n");
+				token.nome_atributo = TWODOTS;
+				estado=0;
+				return (token);
+				break;
 		}
 	}
 
