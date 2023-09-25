@@ -83,6 +83,14 @@ Token proximo_token() {
 				else if (c == '=') estado = 5;
 				else if (c == '>') estado = 6;
 
+				else if (c == '(') estado = 11;
+				else if (c == ')') estado = 12;
+				else if (c == '[') estado = 13;
+				else if (c == ']') estado = 14;
+				else if (c == '{') estado = 15;
+				else if (c == '}') estado = 16;
+				
+
 				else if (c == '~') estado = 3; // NOTE: Adição minha
 
 				// TODO: Add estado para falhar
@@ -189,7 +197,49 @@ Token proximo_token() {
 				estado=0;
 				return (token);
 				break;							
+			case 11:
+				cont_sim_lido++;
+				printf("<(>\n");
+				token.nome_atributo = c;
+				estado=0;
+				return (token);
+				break;
+			case 12:
+				cont_sim_lido++;
+				printf("<)>\n");
+				token.nome_atributo = c;
+				estado=0;
+				return (token);
+				break;
+			case 13:
+				cont_sim_lido++;
+				printf("<[>\n");
+				token.nome_atributo = c;
+				estado = 0;
+				return (token);
+				break;
 				
+			case 14:
+				cont_sim_lido++;
+				printf("<]>\n");
+				token.nome_atributo = c;
+				estado = 0;
+				return (token);
+				break;
+			case 15: 
+				cont_sim_lido++;
+				printf("<{>\n");
+				token.nome_atributo = c;
+				estado = 0;
+				return (token);
+				break;
+			case 16:
+				cont_sim_lido++;
+				printf("<}>\n");
+				token.nome_atributo = c;
+				estado = 0;
+				return (token);
+				break;
 		}
 	}
 
