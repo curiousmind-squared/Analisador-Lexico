@@ -145,7 +145,7 @@ Token proximo_token() {
 			case 5: 
 				cont_sim_lido++;
 				c = code[cont_sim_lido];
-				// TODO: Imagino que isso não esteja certo, está um pouco confuso
+				// TODO: Isso está certo, porém esse 'if' deve virar um estado novo
 				if (c == '=') {
 					printf("<relop, EQ>\n");
 					token.nome_atributo = RELOP;
