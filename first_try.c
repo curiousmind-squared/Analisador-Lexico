@@ -19,6 +19,8 @@
 #define GT 266
 #define GE 267
 
+#define TWODOTS 268
+
 #define IDSIZE 20 // TODO: Por que diabos quando bota ';' essa porcaria para de funcionar??? não faz sentido
 
 typedef struct {
@@ -90,6 +92,10 @@ Token proximo_token() {
 				else if (c == '{') estado = 15;
 				else if (c == '}') estado = 16;
 				
+				else if (c == ';') estado = 17;
+				else if (c == ':') estado = 18;
+				else if (c == ',') estado = 19;
+				else if (c == '.') estado = 20; // Aqui tem que ficar esperto por é um pouco diferente
 
 				else if (c == '~') estado = 3; // NOTE: Adição minha
 
@@ -238,6 +244,46 @@ Token proximo_token() {
 				printf("<}>\n");
 				token.nome_atributo = c;
 				estado = 0;
+				return (token);
+				break;
+			case 17:
+				cont_sim_lido++;
+				printf("<;>\n");
+				token.nome_atributo = c;
+				estado = 0;
+				return (token);
+				break;
+			case 18:
+				cont_sim_lido++;
+				printf("<:>\n");
+				token.nome_atributo = c;
+				estado = 0;
+				return (token);
+				break;
+			case 19:
+				cont_sim_lido++;
+				printf("<,>\n");
+				token.nome_atributo = c;
+				estado = 0;
+				return (token);
+				break;
+			case 20:
+				cont_sim_lido++;
+				char d;
+				d = code[cont_sim_lido];
+				if (d == '.') estado = 21;
+				else {
+					printf("<.>\n");
+					token.nome_atributo = c;
+			        	estado = 0;
+					return (token);
+				}
+				break;
+			case 21:
+				cont_sim_lido++;
+				printf("<..>\n");
+				token.nome_atributo = TWODOTS;
+				estado=0;
 				return (token);
 				break;
 		}
