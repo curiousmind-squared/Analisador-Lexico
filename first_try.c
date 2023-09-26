@@ -4,6 +4,9 @@
 #include <stdbool.h>
 #include <string.h>
 
+// TODO: Palavras reservadas não precisam ser macros, podemos calcular utilizando alguma fórmula 
+//       que limite o range(280-301 por exemplo)
+
 // TOKENS
 #define IF 256
 #define THEN 257
