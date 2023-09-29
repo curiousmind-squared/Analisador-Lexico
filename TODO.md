@@ -1,3 +1,4 @@
+- Adicionar retorno para a palavra reservada: Será retornada a palavra e sua posição na tabela de símbolos
 - Reorganizar a numeração dos cases
 	- Reorganizar da forma que a professora quer, utilizando os estados "Falhar" para trocar de máquinas.
 	- Case '0' serve para checar apena soperadores, case '1' serve praa id's e etc. Quando falhamos em um jogamos para o outro
