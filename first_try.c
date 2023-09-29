@@ -4,13 +4,8 @@
 #include <stdbool.h>
 #include <string.h>
 
-// TODO: Palavras reservadas não precisam ser macros, podemos calcular utilizando alguma fórmula 
-//       que limite o range(280-301 por exemplo)
 
 // TOKENS
-#define IF 256
-#define THEN 257
-#define ELSE 258
 #define RELOP 259
 #define ID 260
 #define NUM 261
@@ -30,6 +25,9 @@
 #define MAXARRSIZE 100
 
 #define RESERVEDKEYWORDS 21
+
+// FIXME: Essa númeração é temporária, quando ajeitarmos os cases e a númeração dos tokens ajeitamos isso 
+#define BASECASEFORKEYWORDS 300
 
 typedef struct {
 	int nome_atributo;
@@ -92,11 +90,14 @@ char *readFile(char *fileName) {
 
 }
 
-bool keyword_check(char* word) {
+bool keyword_check(char* word, int *pos) {
 	for (size_t i=0; i<RESERVEDKEYWORDS;i++) {
-		if (strcmp(word, tabela[i]) == 0)
+		if (strcmp(word, tabela[i]) == 0){
+			*pos = i;
 			return true;
+		}
 	}
+	*pos = -1;
 	return false;
 }
 
@@ -240,13 +241,13 @@ Token proximo_token() {
 				id_str[p_id] = '\0';
 
 				// Checamos se a string é uma palavra reservada
-				bool isKeyword = keyword_check(id_str);
+				int pos;
+				bool isKeyword = keyword_check(id_str, &pos);
 				if (isKeyword){
-					printf("<%s>\n", id_str);
-					// TODO: Implementar uma forma de entender qual código 
-					//       deverá ser retornado para token.nome_atributo
-					//token.nome_atributo = numero_do_atributo();
-					// IF == x; ELSE == x+1 e etc.
+					printf("<%s, %d>\n", id_str, pos);
+					token.nome_atributo = BASECASEFORKEYWORDS + pos;
+					token.nome_atributo = pos;
+
 				}	
 				else {
 					strcpy(tabela[tabela_pointer], id_str);
