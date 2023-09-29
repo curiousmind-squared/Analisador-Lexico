@@ -1,7 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <stdbool.h>
+#include <string.h>
 
+// TODO: Palavras reservadas não precisam ser macros, podemos calcular utilizando alguma fórmula 
+//       que limite o range(280-301 por exemplo)
 
 // TOKENS
 #define IF 256
@@ -18,20 +22,53 @@
 #define NE 265
 #define GT 266
 #define GE 267
-
 #define TWODOTS 268
 
-#define IDSIZE 20 // TODO: Por que diabos quando bota ';' essa porcaria para de funcionar??? não faz sentido
+// SIZES
+#define IDSIZE 20 
+#define MAXSTRSIZE 20
+#define MAXARRSIZE 100
+
+#define RESERVEDKEYWORDS 21
 
 typedef struct {
 	int nome_atributo;
 	int atributo;
 } Token;
 
+// Tabela de símbolos
+char tabela[MAXARRSIZE][MAXSTRSIZE] = {
+		"and",
+		"break",
+		"do",
+		"else",
+		"elseif",
+		"end",
+		"false",
+		"for",
+		"function",
+		"if",
+		"in",
+		"local",
+		"nil",
+		"not",
+		"or",
+		"repeat",
+		"return",
+		"then",
+		"true",
+		"until",
+		"while",
+};
+
+
 int estado = 0;
 int partida = 0;
 int cont_sim_lido = 0;
 char *code; 
+
+size_t tabela_pointer = 22; // 21 palavras reservadas, a var começa apontando para o próximo espaço livre na tabela
+
 
 char *readFile(char *fileName) {
 	FILE *file = fopen(fileName, "r");
@@ -55,12 +92,19 @@ char *readFile(char *fileName) {
 
 }
 
+bool keyword_check(char* word) {
+	for (size_t i=0; i<RESERVEDKEYWORDS;i++) {
+		if (strcmp(word, tabela[i]) == 0)
+			return true;
+	}
+	return false;
+}
+
 Token proximo_token() {
 
 	Token token;
 	char c;
 
- 	// Imagino que é preciso criar um array para ir armazenando os dados
 	char id_str[IDSIZE];
 	int p_id;
 
@@ -192,14 +236,25 @@ Token proximo_token() {
 				break;
 
 			case 10:
-				// Algumas ações devem ser tomadas
 				p_id++;
 				id_str[p_id] = '\0';
-				// printf("A string é: %s\n", id_str); // Tudo parece estar funcionando
 
-				printf("<ID, (posição na tabela de símbolos)>\n");
-				token.nome_atributo = ID;
-				token.atributo = 0; // TODO: Aqui será a posição na tabela de símbolos
+				// Checamos se a string é uma palavra reservada
+				bool isKeyword = keyword_check(id_str);
+				if (isKeyword){
+					printf("<%s>\n", id_str);
+					// TODO: Implementar uma forma de entender qual código 
+					//       deverá ser retornado para token.nome_atributo
+					//token.nome_atributo = numero_do_atributo();
+					// IF == x; ELSE == x+1 e etc.
+				}	
+				else {
+					strcpy(tabela[tabela_pointer], id_str);
+					printf("<ID, %zu>\n", tabela_pointer);
+					token.nome_atributo = ID;
+					token.atributo = tabela_pointer; 
+					tabela_pointer++;
+				}
 				estado=0;
 				return (token);
 				break;							
