@@ -354,7 +354,7 @@ Token proximo_token() {
 int main() {
 	Token token; 
 	printf("\n"); // FIXME: Isso resolve um bug muito esquisito que aparece
-	              // Se quiser reproduzir basta colocar para ler bug.txt e remover esse print
+	              // Se quiser reproduzir basta pegar o trecho em TODO.md e remover esse print
 
 	code = readFile("src.txt"); //TODO: Esse arquivo deve ser passado como parâmetro 
 
