@@ -113,6 +113,9 @@ Token proximo_token() {
 	char str[MAXSTRSIZE];
 	int p_str;
 
+	char num_str[MAXSTRSIZE];
+	int p_num;
+
 	while (code[cont_sim_lido] != '\0'){
 		switch (estado)
 		{
@@ -130,6 +133,14 @@ Token proximo_token() {
 					id_str[p_id] = c;
 					estado = 9;
 				}
+
+				if (isdigit(c)){
+					p_num = 0;
+					num_str[p_num] = c;
+					estado = 23;
+					
+				}
+
 				else if (c == '<') estado = 1;
 				else if (c == '=') estado = 5;
 				else if (c == '>') estado = 6;
@@ -374,6 +385,32 @@ Token proximo_token() {
 					estado = 22;
 					p_str++;
 				}
+				break;
+
+			case 23:
+				cont_sim_lido++;
+				c = code[cont_sim_lido];
+				if (c == '\n' || c == ' ')
+					estado=24;
+				else if (isdigit(c)) {
+					p_str++;
+					num_str[p_str] = c;
+					estado=23;
+				} 
+				// TODO: Tem que ter um estado para caso não seja número, se for letra por exemplo, devemos apresentar um erro
+				break;
+			case 24: // TODO: Adicionar um case para caso o número seja muito longo retornar problema
+				p_str++;
+				num_str[p_str] = '\0';
+
+				int num = atoi(num_str);
+				
+				printf("<NUM, %d>\n", num);
+
+				token.nome_atributo = NUM;
+				token.atributo = num;
+				estado=0;
+				return (token);
 				break;
 
 		}
