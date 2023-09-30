@@ -222,9 +222,11 @@ Token proximo_token() {
 					token.atributo = EQ;
 					//estado=0; // Isso estava causando um bug
 					return (token);
-				} else if (c == ' ' || c == '\n'){
+				} else if (c == ' ' || c == '\n'|| (isdigit(c))){ // FIXME: Bug parcialmente resolvido, porem so funciona para digitos
+										  // colados no igual(a=2), temos que fazer todos os outros casos
 					printf("<atribuição>\n");
 					token.nome_atributo = c;
+					estado=0; // Isso foi colcado aqui pois se não causava bug e lia 2x o operador de atribuição para o caso 'a=2'
 					return (token);
 
 				}
@@ -257,7 +259,7 @@ Token proximo_token() {
 			case 9:
 				cont_sim_lido++;
 				c = code[cont_sim_lido];
-				if (c == '\n' || c == ' ')
+				if (c == '\n' || c == ' ' || c == '=') // FIXME: Quando colocavamos a=2 não estava functionando, da mesma forma se fizermos a<=2 também não vai funcionar
 					estado = 10;
 				else {
 					p_id++;
