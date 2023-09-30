@@ -145,6 +145,10 @@ Token proximo_token() {
 				else if (c == '-') {
 					estado = 25;
 				}
+				else if (c == '+') estado = 27;										
+				else if (c == '*') estado = 29;
+				else if (c == '/') estado = 30;
+				else if (c == '^') estado = 31;
 
 				else if (c == '<') estado = 1;
 				else if (c == '=') estado = 5;
@@ -433,6 +437,8 @@ Token proximo_token() {
 
 				if (c == '-' && e != '[') // Comentário curto
 					estado=26;
+				else if (isdigit(c) || isalpha(c) || c == ' ' || c == '\n') // Pode ser só um sinal de menos
+					estado=28;
 				// TODO: Aqui teremos que ter um erro
 				break;
 			case 26:
@@ -446,6 +452,41 @@ Token proximo_token() {
 					
 				else
 					estado=26;
+				break;
+			case 27:
+				cont_sim_lido++;
+				printf("<+>\n");
+				token.nome_atributo = c;
+				estado=0;
+				return (token);
+				break;
+			case 28:
+				cont_sim_lido++;
+				printf("<->\n");
+				token.nome_atributo = c;
+				estado=0;
+				return (token);
+				break;
+			case 29:
+				cont_sim_lido++;
+				printf("<*>\n");
+				token.nome_atributo = c;
+				estado=0;
+				return (token);
+				break;
+			case 30:
+				cont_sim_lido++;
+				printf("</>\n");
+				token.nome_atributo = c;
+				estado=0;
+				return (token);
+				break;
+			case 31:
+				cont_sim_lido++;
+				printf("<^>\n");
+				token.nome_atributo = c;
+				estado=0;
+				return (token);
 				break;
 		}
 	}
