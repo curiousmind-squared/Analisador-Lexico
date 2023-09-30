@@ -222,6 +222,11 @@ Token proximo_token() {
 					token.atributo = EQ;
 					//estado=0; // Isso estava causando um bug
 					return (token);
+				} else if (c == ' ' || c == '\n'){
+					printf("<atribuição>\n");
+					token.nome_atributo = c;
+					return (token);
+
 				}
 				estado=0; // Por isso isso veio para cá
 				break;
