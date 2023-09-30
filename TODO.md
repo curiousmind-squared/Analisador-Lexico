@@ -5,7 +5,6 @@
 	- Comentário longo começa com '--[[' e termina com ']]'
 	- Lembrar que aninhamento deve ser possível. Pode ser resolvido com uma pilha ou um contador
 	
-- Não será preciso reconhecer pontos flutuantes, apenas inteiros 
 - Caso encontre '~' e depois não encontre um '=', deve ser apontado um erro, esse caso deve ser estudo para ser generalizado
 - Ajeitar os 'TODO's' e 'FIXME's' do código
 - Bug:
