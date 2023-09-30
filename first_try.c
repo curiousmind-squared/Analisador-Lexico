@@ -67,6 +67,7 @@ int cont_sim_lido = 0;
 char *code; 
 
 size_t tabela_pointer = 22; // 21 palavras reservadas, a var começa apontando para o próximo espaço livre na tabela
+// Apenas um aviso, o espaço 21 fica vazio, não sei se devemos deixar assim ou não
 
 
 char *readFile(char *fileName) {
@@ -139,6 +140,10 @@ Token proximo_token() {
 					num_str[p_num] = c;
 					estado = 23;
 					
+				}
+
+				else if (c == '-') {
+					estado = 25;
 				}
 
 				else if (c == '<') estado = 1;
@@ -413,6 +418,28 @@ Token proximo_token() {
 				return (token);
 				break;
 
+			case 25:
+				cont_sim_lido++;
+				c = code[cont_sim_lido];
+				
+				char e = code[(cont_sim_lido+1)];
+
+				if (c == '-' && e != '[') // Comentário curto
+					estado=26;
+				// TODO: Aqui teremos que ter um erro
+				break;
+			case 26:
+				cont_sim_lido++;
+				c = code[cont_sim_lido];
+
+				if (c == '\n'){
+					cont_sim_lido++;
+					estado=0;
+				}
+					
+				else
+					estado=26;
+				break;
 		}
 	}
 
@@ -435,6 +462,14 @@ int main() {
 
 	printf("\n"); // Adicionei isso apenas para ficar organizado com o print de cima, se o bug for 
 	 	      // resolvido pode remover
+	
+	/*
+	// Vamos printar a tabela de simbolos
+	printf("Tabela de simbolos");
+	for (size_t i = 0; i<tabela_pointer; i++){
+		printf("%zu - %s\n",i,  tabela[i]);
+	}
+	*/
 
 	free(code);
 
