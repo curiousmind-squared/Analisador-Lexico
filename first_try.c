@@ -4,16 +4,12 @@
 #include <stdbool.h>
 #include <string.h>
 
-// TODO: Palavras reservadas não precisam ser macros, podemos calcular utilizando alguma fórmula 
-//       que limite o range(280-301 por exemplo)
 
 // TOKENS
-#define IF 256
-#define THEN 257
-#define ELSE 258
 #define RELOP 259
 #define ID 260
 #define NUM 261
+#define STRING 270
 
 // ATRIBUTOS
 #define LT 262
@@ -26,10 +22,13 @@
 
 // SIZES
 #define IDSIZE 20 
-#define MAXSTRSIZE 20
+#define MAXSTRSIZE 200
 #define MAXARRSIZE 100
 
 #define RESERVEDKEYWORDS 21
+
+// FIXME: Essa númeração é temporária, quando ajeitarmos os cases e a númeração dos tokens ajeitamos isso 
+#define BASECASEFORKEYWORDS 300
 
 typedef struct {
 	int nome_atributo;
@@ -92,11 +91,14 @@ char *readFile(char *fileName) {
 
 }
 
-bool keyword_check(char* word) {
+bool keyword_check(char* word, int *pos) {
 	for (size_t i=0; i<RESERVEDKEYWORDS;i++) {
-		if (strcmp(word, tabela[i]) == 0)
+		if (strcmp(word, tabela[i]) == 0){
+			*pos = i;
 			return true;
+		}
 	}
+	*pos = -1;
 	return false;
 }
 
@@ -107,6 +109,9 @@ Token proximo_token() {
 
 	char id_str[IDSIZE];
 	int p_id;
+
+	char str[MAXSTRSIZE];
+	int p_str;
 
 	while (code[cont_sim_lido] != '\0'){
 		switch (estado)
@@ -140,6 +145,11 @@ Token proximo_token() {
 				else if (c == ':') estado = 18;
 				else if (c == ',') estado = 19;
 				else if (c == '.') estado = 20; // Aqui tem que ficar esperto por é um pouco diferente
+				
+				else if (c == '"'){ 
+					p_str = 0;
+					estado = 22;
+				}
 
 				else if (c == '~') estado = 3; // NOTE: Adição minha
 
@@ -240,13 +250,13 @@ Token proximo_token() {
 				id_str[p_id] = '\0';
 
 				// Checamos se a string é uma palavra reservada
-				bool isKeyword = keyword_check(id_str);
+				int pos;
+				bool isKeyword = keyword_check(id_str, &pos);
 				if (isKeyword){
-					printf("<%s>\n", id_str);
-					// TODO: Implementar uma forma de entender qual código 
-					//       deverá ser retornado para token.nome_atributo
-					//token.nome_atributo = numero_do_atributo();
-					// IF == x; ELSE == x+1 e etc.
+					printf("<%s, %d>\n", id_str, pos);
+					token.nome_atributo = BASECASEFORKEYWORDS + pos;
+					token.nome_atributo = pos;
+
 				}	
 				else {
 					strcpy(tabela[tabela_pointer], id_str);
@@ -341,6 +351,31 @@ Token proximo_token() {
 				estado=0;
 				return (token);
 				break;
+
+			case 22: // TODO: Adicionar else para caso a string não feche(tem que checar por fim de arquivo), subir um erro
+				cont_sim_lido++;
+				c = code[cont_sim_lido];
+				if (c == '"') {
+					str[p_str] = '\0';
+					strcpy(tabela[tabela_pointer], str);
+					printf("<%s, %zu>\n", str, tabela_pointer);
+
+					token.atributo = STRING;
+					token.nome_atributo = tabela_pointer;
+					
+					cont_sim_lido++;
+					tabela_pointer++;
+					estado=0;
+					return (token);
+					break;
+
+				} else {
+					str[p_str] = c;
+					estado = 22;
+					p_str++;
+				}
+				break;
+
 		}
 	}
 
