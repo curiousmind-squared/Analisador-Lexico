@@ -145,6 +145,10 @@ Token proximo_token() {
 				else if (c == '-') {
 					estado = 25;
 				}
+				else if (c == '+') estado = 27;										
+				else if (c == '*') estado = 29;
+				else if (c == '/') estado = 30;
+				else if (c == '^') estado = 31;
 
 				else if (c == '<') estado = 1;
 				else if (c == '=') estado = 5;
@@ -222,6 +226,13 @@ Token proximo_token() {
 					token.atributo = EQ;
 					//estado=0; // Isso estava causando um bug
 					return (token);
+				} else if (c == ' ' || c == '\n'|| (isdigit(c))){ // FIXME: Bug parcialmente resolvido, porem so funciona para digitos
+										  // colados no igual(a=2), temos que fazer todos os outros casos
+					printf("<atribuição>\n");
+					token.nome_atributo = c;
+					estado=0; // Isso foi colcado aqui pois se não causava bug e lia 2x o operador de atribuição para o caso 'a=2'
+					return (token);
+
 				}
 				estado=0; // Por isso isso veio para cá
 				break;
@@ -252,7 +263,7 @@ Token proximo_token() {
 			case 9:
 				cont_sim_lido++;
 				c = code[cont_sim_lido];
-				if (c == '\n' || c == ' ')
+				if (c == '\n' || c == ' ' || c == '=') // FIXME: Quando colocavamos a=2 não estava functionando, da mesma forma se fizermos a<=2 também não vai funcionar
 					estado = 10;
 				else {
 					p_id++;
@@ -426,6 +437,8 @@ Token proximo_token() {
 
 				if (c == '-' && e != '[') // Comentário curto
 					estado=26;
+				else if (isdigit(c) || isalpha(c) || c == ' ' || c == '\n') // Pode ser só um sinal de menos
+					estado=28;
 				// TODO: Aqui teremos que ter um erro
 				break;
 			case 26:
@@ -439,6 +452,41 @@ Token proximo_token() {
 					
 				else
 					estado=26;
+				break;
+			case 27:
+				cont_sim_lido++;
+				printf("<+>\n");
+				token.nome_atributo = c;
+				estado=0;
+				return (token);
+				break;
+			case 28:
+				cont_sim_lido++;
+				printf("<->\n");
+				token.nome_atributo = c;
+				estado=0;
+				return (token);
+				break;
+			case 29:
+				cont_sim_lido++;
+				printf("<*>\n");
+				token.nome_atributo = c;
+				estado=0;
+				return (token);
+				break;
+			case 30:
+				cont_sim_lido++;
+				printf("</>\n");
+				token.nome_atributo = c;
+				estado=0;
+				return (token);
+				break;
+			case 31:
+				cont_sim_lido++;
+				printf("<^>\n");
+				token.nome_atributo = c;
+				estado=0;
+				return (token);
 				break;
 		}
 	}
