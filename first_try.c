@@ -9,6 +9,7 @@
 #define RELOP 259
 #define ID 260
 #define NUM 261
+#define STRING 270
 
 // ATRIBUTOS
 #define LT 262
@@ -21,7 +22,7 @@
 
 // SIZES
 #define IDSIZE 20 
-#define MAXSTRSIZE 20
+#define MAXSTRSIZE 200
 #define MAXARRSIZE 100
 
 #define RESERVEDKEYWORDS 21
@@ -109,6 +110,9 @@ Token proximo_token() {
 	char id_str[IDSIZE];
 	int p_id;
 
+	char str[MAXSTRSIZE];
+	int p_str;
+
 	while (code[cont_sim_lido] != '\0'){
 		switch (estado)
 		{
@@ -141,6 +145,11 @@ Token proximo_token() {
 				else if (c == ':') estado = 18;
 				else if (c == ',') estado = 19;
 				else if (c == '.') estado = 20; // Aqui tem que ficar esperto por é um pouco diferente
+				
+				else if (c == '"'){ 
+					p_str = 0;
+					estado = 22;
+				}
 
 				else if (c == '~') estado = 3; // NOTE: Adição minha
 
@@ -342,6 +351,31 @@ Token proximo_token() {
 				estado=0;
 				return (token);
 				break;
+
+			case 22: // TODO: Adicionar else para caso a string não feche(tem que checar por fim de arquivo), subir um erro
+				cont_sim_lido++;
+				c = code[cont_sim_lido];
+				if (c == '"') {
+					str[p_str] = '\0';
+					strcpy(tabela[tabela_pointer], str);
+					printf("<%s, %zu>\n", str, tabela_pointer);
+
+					token.atributo = STRING;
+					token.nome_atributo = tabela_pointer;
+					
+					cont_sim_lido++;
+					tabela_pointer++;
+					estado=0;
+					return (token);
+					break;
+
+				} else {
+					str[p_str] = c;
+					estado = 22;
+					p_str++;
+				}
+				break;
+
 		}
 	}
 
