@@ -202,6 +202,7 @@ Token proximo_token() {
 					printf("<relop, NE>\n");
 					token.nome_atributo = RELOP;
 					token.atributo = NE;
+					cont_sim_lido++;
 					estado = 0;
 					return (token);
 				}
@@ -224,17 +225,16 @@ Token proximo_token() {
 					printf("<relop, EQ>\n");
 					token.nome_atributo = RELOP;
 					token.atributo = EQ;
-					//estado=0; // Isso estava causando um bug
+					cont_sim_lido++;
+					estado=0; 
 					return (token);
-				} else if (c == ' ' || c == '\n'|| (isdigit(c))){ // FIXME: Bug parcialmente resolvido, porem so funciona para digitos
-										  // colados no igual(a=2), temos que fazer todos os outros casos
+				} else if (c == ' ' || c == '\n' || isalnum(c) || c == '"' || c == '('){  // NOTA: atribuição só pode ser sucedido por numeros, letras, começo de string e parentesis
 					printf("<atribuição>\n");
 					token.nome_atributo = c;
-					estado=0; // Isso foi colcado aqui pois se não causava bug e lia 2x o operador de atribuição para o caso 'a=2'
+					estado=0; 
 					return (token);
 
-				}
-				estado=0; // Por isso isso veio para cá
+				} 
 				break;
 			case 6:
 				cont_sim_lido++;
@@ -263,7 +263,7 @@ Token proximo_token() {
 			case 9:
 				cont_sim_lido++;
 				c = code[cont_sim_lido];
-				if (c == '\n' || c == ' ' || c == '=') // FIXME: Quando colocavamos a=2 não estava functionando, da mesma forma se fizermos a<=2 também não vai funcionar
+				if (!isalnum(c)) 
 					estado = 10;
 				else {
 					p_id++;
@@ -406,7 +406,7 @@ Token proximo_token() {
 			case 23:
 				cont_sim_lido++;
 				c = code[cont_sim_lido];
-				if (c == '\n' || c == ' ')
+				if (!isalpha(c))
 					estado=24;
 				else if (isdigit(c)) {
 					p_str++;
