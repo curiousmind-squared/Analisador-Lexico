@@ -449,7 +449,7 @@ Token proximo_token() {
 			case 23:
 				cont_sim_lido++;
 				c = code[cont_sim_lido];
-				if (c == ' ' || c == '\n' || c == '=' || c == '<' || c == '>' || c == '(' || c == ')' || c == '*' || c == '/' || c == '+' || c == '-' || c == '^')
+				if (c == ' ' || c == '\n' || c == '=' || c == '<' || c == '>' || c == '(' || c == ')' || c == '*' || c == '/' || c == '+' || c == '-' || c == '^' || c == ';' || c == ':' || c == '.' || c == ',')
 					estado=24;
 				else if (isdigit(c)) {
 					p_num++;
