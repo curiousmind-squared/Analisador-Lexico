@@ -82,8 +82,9 @@ char *readFile(char *fileName) {
 	long f_size = ftell(file);
 	fseek(file, 0, SEEK_SET);
 	
-	code = malloc(sizeof(f_size));
-
+	//code = malloc(sizeof(f_size));
+	code = (char *)malloc(f_size + 1);
+	
 	if (code == NULL) {
         	fclose(file); // Close the file before returning
         	return NULL;
