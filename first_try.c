@@ -84,10 +84,19 @@ char *readFile(char *fileName) {
 	
 	code = malloc(sizeof(f_size));
 
+	if (code == NULL) {
+        	fclose(file); // Close the file before returning
+        	return NULL;
+	}
+
+
 	while ((c = fgetc(file)) != EOF) {
 		code[n++] = (char) c;
 	}
+	
 	code[n] = '\0';
+	fclose(file);
+
 	return code;
 
 }
@@ -549,9 +558,6 @@ Token proximo_token() {
 
 int main() {
 	Token token; 
-	
-	printf("\n"); // FIXME: Isso resolve um bug muito esquisito que aparece
-	              // Se quiser reproduzir basta pegar o trecho em TODO.md e remover esse print
 
 	code = readFile("src.txt"); //TODO: Esse arquivo deve ser passado como parâmetro 
 	
@@ -563,8 +569,6 @@ int main() {
 	}
 	
 
-	printf("\n"); // Adicionei isso apenas para ficar organizado com o print de cima, se o bug for 
-	 	      // resolvido pode remover
 	
 	/*
 	// Vamos printar a tabela de simbolos
