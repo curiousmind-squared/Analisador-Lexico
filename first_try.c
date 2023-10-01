@@ -127,53 +127,64 @@ Token proximo_token() {
 				{
 					estado=0;
 					cont_sim_lido++;
+					break;
 				}
 
 				if (isalpha(c)) { 
-					p_id = 0; // Primeira posição do char
+					p_id = 0; 
 					id_str[p_id] = c;
 					estado = 9;
+					break;
 				}
 
 				if (isdigit(c)){
 					p_num = 0;
 					num_str[p_num] = c;
 					estado = 23;
+					break;
 					
 				}
 
 				else if (c == '-') {
 					estado = 25;
+					break;
 				}
-				else if (c == '+') estado = 27;										
-				else if (c == '*') estado = 29;
-				else if (c == '/') estado = 30;
-				else if (c == '^') estado = 31;
+				else if (c == '+'){ estado = 27; break;}
+				else if (c == '*'){ estado = 29; break;}
+				else if (c == '/'){ estado = 30; break;}
+				else if (c == '^'){ estado = 31;break;}
 
-				else if (c == '<') estado = 1;
-				else if (c == '=') estado = 5;
-				else if (c == '>') estado = 6;
+				else if (c == '<'){ estado = 1;break;}
+				else if (c == '='){ estado = 5;break;}
+				else if (c == '>'){ estado = 6;break;}
 
-				else if (c == '(') estado = 11;
-				else if (c == ')') estado = 12;
-				else if (c == '[') estado = 13;
-				else if (c == ']') estado = 14;
-				else if (c == '{') estado = 15;
-				else if (c == '}') estado = 16;
+				else if (c == '(') {estado = 11;break;}
+				else if (c == ')') {estado = 12;break;}
+				else if (c == '[') {estado = 13;break;}
+				else if (c == ']') {estado = 14;break;}
+				else if (c == '{') {estado = 15;break;}
+				else if (c == '}') {estado = 16;break;}
 				
-				else if (c == ';') estado = 17;
-				else if (c == ':') estado = 18;
-				else if (c == ',') estado = 19;
-				else if (c == '.') estado = 20; // Aqui tem que ficar esperto por é um pouco diferente
+				else if (c == ';') {estado = 17;break;}
+				else if (c == ':') {estado = 18;break;}
+				else if (c == ',') {estado = 19;break;}
+				else if (c == '.') {estado = 20;break;} 
 				
 				else if (c == '"'){ 
 					p_str = 0;
 					estado = 22;
+					break;
 				}
 
-				else if (c == '~') estado = 3; // NOTE: Adição minha
-
-				// TODO: Add estado para falhar
+				else if (c == '~') {estado = 3;break;}
+				
+				else {
+					printf("Erro léxico: Um caracter não reconhecido pela linguagem foi inserido");
+					token.nome_atributo = EOF;
+					token.atributo = -1;
+					code[cont_sim_lido] = '\0';
+					return (token);
+				}
 				
 				break;
 
@@ -209,7 +220,7 @@ Token proximo_token() {
 					printf("Erro léxico: ~ deve ser sucedido de '='");
 					token.nome_atributo = EOF;
 					token.atributo = -1;
-					code[cont_sim_lido] = '\0';
+					code[cont_sim_lido] = '\0'; 
 				}
 				break;
 
@@ -225,7 +236,7 @@ Token proximo_token() {
 			case 5: 
 				cont_sim_lido++;
 				c = code[cont_sim_lido];
-				// TODO: Isso está certo, porém esse 'if' deve virar um estado novo
+				
 				if (c == '=') {
 					printf("<relop, EQ>\n");
 					token.nome_atributo = RELOP;
@@ -233,7 +244,7 @@ Token proximo_token() {
 					cont_sim_lido++;
 					estado=0; 
 					return (token);
-				} else if (c == ' ' || c == '\n' || isalnum(c) || c == '"' || c == '('){  // NOTA: atribuição só pode ser sucedido por numeros, letras, começo de string e parentesis
+				} else {  // TODO: Decidir o que pode suceder o operador de 'igual'
 					printf("<atribuição>\n");
 					token.nome_atributo = c;
 					estado=0; 
@@ -411,18 +422,24 @@ Token proximo_token() {
 			case 23:
 				cont_sim_lido++;
 				c = code[cont_sim_lido];
-				if (!isalpha(c))
+				if (c == ' ' || c == '\n' || c == '=' || c == '<' || c == '>' || c == '(' || c == ')' || c == '*' || c == '/' || c == '+' || c == '-' || c == '^')
 					estado=24;
 				else if (isdigit(c)) {
-					p_str++;
-					num_str[p_str] = c;
+					p_num++;
+					num_str[p_num] = c;
 					estado=23;
-				} 
-				// TODO: Tem que ter um estado para caso não seja número, se for letra por exemplo, devemos apresentar um erro
+				} else {
+					printf("Erro Léxico: má formação do inteiro");
+					token.nome_atributo = EOF;
+					token.atributo = -1;
+					code[cont_sim_lido] = '\0';
+					return (token);
+					break;
+				}
 				break;
 			case 24: // TODO: Adicionar um case para caso o número seja muito longo retornar problema
-				p_str++;
-				num_str[p_str] = '\0';
+				p_num++;
+				num_str[p_num] = '\0';
 
 				int num = atoi(num_str);
 				
