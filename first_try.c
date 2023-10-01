@@ -630,7 +630,7 @@ int main(int argc, char *argv[]) {
 	
 	
 	char *filename = argv[1];
-	code = readFile(filename); //TODO: Esse arquivo deve ser passado como parâmetro 
+	code = readFile(filename); 
 	
 	if (code == NULL){
 		printf("Arquivo não encontrado\n");
