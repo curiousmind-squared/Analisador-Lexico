@@ -620,10 +620,17 @@ Token proximo_token() {
 }
 
 
-int main() {
+int main(int argc, char *argv[]) {
 	Token token; 
 
-	code = readFile("src.txt"); //TODO: Esse arquivo deve ser passado como parâmetro 
+	if (argc != 2) {
+		printf("Como chamar o Analisador Léxico: %s <nome do arquivo>\n", argv[0]);
+		return 1;
+	}
+	
+	
+	char *filename = argv[1];
+	code = readFile(filename); //TODO: Esse arquivo deve ser passado como parâmetro 
 	
 	if (code == NULL){
 		printf("Arquivo não encontrado\n");
