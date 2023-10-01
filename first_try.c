@@ -27,7 +27,7 @@
 
 #define RESERVEDKEYWORDS 21
 
-// FIXME: Essa númeração é temporária, quando ajeitarmos os cases e a númeração dos tokens ajeitamos isso 
+
 #define BASECASEFORKEYWORDS 300
 
 typedef struct {
@@ -103,6 +103,18 @@ bool keyword_check(char* word, int *pos) {
 	return false;
 }
 
+bool table_check(char* word, int *se_existe_pos) {
+	for (size_t i=(RESERVEDKEYWORDS+1); i<tabela_pointer; i++){
+		if (strcmp(word, tabela[i]) == 0){
+			*se_existe_pos = i;
+			return true;
+		}
+	}
+	*se_existe_pos = -1;
+	return false;
+}
+
+
 Token proximo_token() {
 
 	Token token;
@@ -123,57 +135,68 @@ Token proximo_token() {
 			case 0:
 				c = code[cont_sim_lido];
 				
-				if ((c == ' ')||(c == '\n'))
+				if ((c == ' ')||(c == '\n') || iscntrl(c))
 				{
 					estado=0;
 					cont_sim_lido++;
+					break;
 				}
 
 				if (isalpha(c)) { 
-					p_id = 0; // Primeira posição do char
+					p_id = 0; 
 					id_str[p_id] = c;
 					estado = 9;
+					break;
 				}
 
 				if (isdigit(c)){
 					p_num = 0;
 					num_str[p_num] = c;
 					estado = 23;
+					break;
 					
 				}
 
 				else if (c == '-') {
 					estado = 25;
+					break;
 				}
-				else if (c == '+') estado = 27;										
-				else if (c == '*') estado = 29;
-				else if (c == '/') estado = 30;
-				else if (c == '^') estado = 31;
+				else if (c == '+'){ estado = 27; break;}
+				else if (c == '*'){ estado = 29; break;}
+				else if (c == '/'){ estado = 30; break;}
+				else if (c == '^'){ estado = 31;break;}
 
-				else if (c == '<') estado = 1;
-				else if (c == '=') estado = 5;
-				else if (c == '>') estado = 6;
+				else if (c == '<'){ estado = 1;break;}
+				else if (c == '='){ estado = 5;break;}
+				else if (c == '>'){ estado = 6;break;}
 
-				else if (c == '(') estado = 11;
-				else if (c == ')') estado = 12;
-				else if (c == '[') estado = 13;
-				else if (c == ']') estado = 14;
-				else if (c == '{') estado = 15;
-				else if (c == '}') estado = 16;
+				else if (c == '(') {estado = 11;break;}
+				else if (c == ')') {estado = 12;break;}
+				else if (c == '[') {estado = 13;break;}
+				else if (c == ']') {estado = 14;break;}
+				else if (c == '{') {estado = 15;break;}
+				else if (c == '}') {estado = 16;break;}
 				
-				else if (c == ';') estado = 17;
-				else if (c == ':') estado = 18;
-				else if (c == ',') estado = 19;
-				else if (c == '.') estado = 20; // Aqui tem que ficar esperto por é um pouco diferente
+				else if (c == ';') {estado = 17;break;}
+				else if (c == ':') {estado = 18;break;}
+				else if (c == ',') {estado = 19;break;}
+				else if (c == '.') {estado = 20;break;} 
 				
 				else if (c == '"'){ 
 					p_str = 0;
 					estado = 22;
+					break;
 				}
 
-				else if (c == '~') estado = 3; // NOTE: Adição minha
-
-				// TODO: Add estado para falhar
+				else if (c == '~') {estado = 3;break;}
+				
+				else {
+					printf("Erro léxico: Um caracter não reconhecido pela linguagem foi inserido\n");
+					token.nome_atributo = EOF;
+					token.atributo = -1;
+					code[cont_sim_lido] = '\0';
+					return (token);
+				}
 				
 				break;
 
@@ -205,6 +228,11 @@ Token proximo_token() {
 					cont_sim_lido++;
 					estado = 0;
 					return (token);
+				} else {
+					printf("Erro léxico: ~ deve ser sucedido de '='\n");
+					token.nome_atributo = EOF;
+					token.atributo = -1;
+					code[cont_sim_lido] = '\0'; 
 				}
 				break;
 
@@ -220,7 +248,7 @@ Token proximo_token() {
 			case 5: 
 				cont_sim_lido++;
 				c = code[cont_sim_lido];
-				// TODO: Isso está certo, porém esse 'if' deve virar um estado novo
+				
 				if (c == '=') {
 					printf("<relop, EQ>\n");
 					token.nome_atributo = RELOP;
@@ -228,7 +256,7 @@ Token proximo_token() {
 					cont_sim_lido++;
 					estado=0; 
 					return (token);
-				} else if (c == ' ' || c == '\n' || isalnum(c) || c == '"' || c == '('){  // NOTA: atribuição só pode ser sucedido por numeros, letras, começo de string e parentesis
+				} else {  // TODO: Decidir o que pode suceder o operador de 'igual'
 					printf("<atribuição>\n");
 					token.nome_atributo = c;
 					estado=0; 
@@ -276,13 +304,20 @@ Token proximo_token() {
 				p_id++;
 				id_str[p_id] = '\0';
 
-				// Checamos se a string é uma palavra reservada
+				
 				int pos;
+				int se_existe_pos;
 				bool isKeyword = keyword_check(id_str, &pos);
+				bool isOnTable = table_check(id_str, &se_existe_pos); // Caso em que o id já existe na tabela
 				if (isKeyword){
 					printf("<%s, %d>\n", id_str, pos);
 					token.nome_atributo = BASECASEFORKEYWORDS + pos;
 					token.nome_atributo = pos;
+
+				} else if (isOnTable) {
+					printf("<ID, %d>\n", se_existe_pos);
+					token.nome_atributo = ID;
+					token.atributo = se_existe_pos;
 
 				}	
 				else {
@@ -379,7 +414,7 @@ Token proximo_token() {
 				return (token);
 				break;
 
-			case 22: // TODO: Adicionar else para caso a string não feche(tem que checar por fim de arquivo), subir um erro
+			case 22: 
 				cont_sim_lido++;
 				c = code[cont_sim_lido];
 				if (c == '"') {
@@ -396,6 +431,14 @@ Token proximo_token() {
 					return (token);
 					break;
 
+				}else if (c == '\n') {
+					printf("Erro Léxico: String não terminada\n");
+					token.nome_atributo = EOF;
+					token.atributo = -1;
+					code[cont_sim_lido] = '\0';
+					return (token);
+					break;
+
 				} else {
 					str[p_str] = c;
 					estado = 22;
@@ -406,18 +449,24 @@ Token proximo_token() {
 			case 23:
 				cont_sim_lido++;
 				c = code[cont_sim_lido];
-				if (!isalpha(c))
+				if (c == ' ' || c == '\n' || c == '=' || c == '<' || c == '>' || c == '(' || c == ')' || c == '*' || c == '/' || c == '+' || c == '-' || c == '^')
 					estado=24;
 				else if (isdigit(c)) {
-					p_str++;
-					num_str[p_str] = c;
+					p_num++;
+					num_str[p_num] = c;
 					estado=23;
-				} 
-				// TODO: Tem que ter um estado para caso não seja número, se for letra por exemplo, devemos apresentar um erro
+				} else {
+					printf("Erro Léxico: má formação do inteiro\n");
+					token.nome_atributo = EOF;
+					token.atributo = -1;
+					code[cont_sim_lido] = '\0';
+					return (token);
+					break;
+				}
 				break;
 			case 24: // TODO: Adicionar um case para caso o número seja muito longo retornar problema
-				p_str++;
-				num_str[p_str] = '\0';
+				p_num++;
+				num_str[p_num] = '\0';
 
 				int num = atoi(num_str);
 				
