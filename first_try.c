@@ -332,7 +332,7 @@ Token proximo_token() {
 				if (isKeyword){
 					printf("<%s, %d>\n", id_str, pos);
 					token.nome_atributo = BASECASEFORKEYWORDS + pos;
-					token.nome_atributo = pos;
+					token.atributo = pos;
 
 				} else if (isOnTable) {
 					printf("<ID, %d>\n", se_existe_pos);
