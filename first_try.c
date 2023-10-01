@@ -549,13 +549,19 @@ Token proximo_token() {
 
 int main() {
 	Token token; 
+	
 	printf("\n"); // FIXME: Isso resolve um bug muito esquisito que aparece
 	              // Se quiser reproduzir basta pegar o trecho em TODO.md e remover esse print
 
 	code = readFile("src.txt"); //TODO: Esse arquivo deve ser passado como parâmetro 
-
-	while (code[cont_sim_lido] != '\0')
-		token = proximo_token();	
+	
+	if (code == NULL){
+		printf("Arquivo não encontrado\n");
+	} else {
+		while (code[cont_sim_lido] != '\0')
+			token = proximo_token();	
+	}
+	
 
 	printf("\n"); // Adicionei isso apenas para ficar organizado com o print de cima, se o bug for 
 	 	      // resolvido pode remover
