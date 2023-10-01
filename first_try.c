@@ -276,7 +276,7 @@ Token proximo_token() {
 					cont_sim_lido++;
 					estado=0; 
 					return (token);
-				} else {  // TODO: Decidir o que pode suceder o operador de 'igual'
+				} else {  
 					printf("<atribuição>\n");
 					token.nome_atributo = c;
 					estado=0; 
