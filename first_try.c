@@ -70,6 +70,7 @@ size_t tabela_pointer = 22; // 21 palavras reservadas, a var começa apontando p
 // Apenas um aviso, o espaço 21 fica vazio, não sei se devemos deixar assim ou não
 
 
+
 char *readFile(char *fileName) {
 	FILE *file = fopen(fileName, "r");
 	char *code;
@@ -148,6 +149,9 @@ Token proximo_token() {
 
 	char num_str[MAXSTRSIZE];
 	int p_num;
+
+	size_t coment_cont = 0; // Variavel que irá manter a contagem de comentários longos, assim permitindo comentários aninhados
+	bool nao_fechou = false; // Variavel para caso apenas um comentario seja aberto e não fechado
 
 	while (code[cont_sim_lido] != '\0'){
 		switch (estado)
@@ -503,13 +507,29 @@ Token proximo_token() {
 				cont_sim_lido++;
 				c = code[cont_sim_lido];
 				
-				char e = code[(cont_sim_lido+1)];
+				char prim_col= code[(cont_sim_lido+1)];
+				char seg_col = code[(cont_sim_lido+2)];
 
-				if (c == '-' && e != '[') // Comentário curto
+				if (c == '-' && prim_col != '[') // Comentário curto
 					estado=26;
 				else if (isdigit(c) || isalpha(c) || c == ' ' || c == '\n') // Pode ser só um sinal de menos
 					estado=28;
-				// TODO: Aqui teremos que ter um erro
+				else if (c == '-' && prim_col == '[' && seg_col == '['){ // Temos o começo de um comentário longo
+					coment_cont=0;
+					nao_fechou = true;
+					cont_sim_lido = cont_sim_lido+3;
+					estado=32;
+				}
+				else {
+					printf("Erro Léxico: Erro na formação do comentário\n");
+					token.nome_atributo = EOF;
+					token.atributo = -1;
+					code[cont_sim_lido] = '\0';
+					return (token);
+					break;
+
+				}
+				
 				break;
 			case 26:
 				cont_sim_lido++;
@@ -558,10 +578,42 @@ Token proximo_token() {
 				estado=0;
 				return (token);
 				break;
+			case 32:
+				c = code[cont_sim_lido];
+				if (c == ']' && code[(cont_sim_lido+1)] == ']') {
+					
+					if (coment_cont == 0) {
+						// Nesse caso podemos fechar o comentário
+						cont_sim_lido = cont_sim_lido + 2;
+						nao_fechou = false;
+						estado=0;
+						break;
+					} else { // Nesse caso ainda não estamos no fechamento correto
+						coment_cont--;
+					}
+
+				} else if (c == '-' && code[(cont_sim_lido+1)] == '-' && code[(cont_sim_lido+2)] == '[' && code[(cont_sim_lido)+3] == '['){ // Para comentários aninhados
+					coment_cont++;
+					cont_sim_lido = cont_sim_lido+3;
+					break;
+					
+				} 
+				cont_sim_lido++;
+				estado=32;
+				break;
+
+
 		}
 	}
 
- 	// Imagino que essa inicialização seja para possíveis erros
+	if (coment_cont > 0 || nao_fechou) {
+		printf("Erro Léxico: Comentário longo não fechado corretamente\n");
+		token.nome_atributo = EOF;
+		token.atributo = -1;
+		code[cont_sim_lido] = '\0';
+		return (token);
+	}
+ 	
 	token.nome_atributo = EOF;
 	token.atributo = -1;
 	return token;
