@@ -205,6 +205,11 @@ Token proximo_token() {
 					cont_sim_lido++;
 					estado = 0;
 					return (token);
+				} else {
+					printf("Erro léxico: ~ deve ser sucedido de '='");
+					token.nome_atributo = EOF;
+					token.atributo = -1;
+					code[cont_sim_lido] = '\0';
 				}
 				break;
 
