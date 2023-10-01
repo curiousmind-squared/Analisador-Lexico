@@ -124,6 +124,16 @@ bool table_check(char* word, int *se_existe_pos) {
 	return false;
 }
 
+bool checar_formacao_num(char c) {
+	char possíveis_fechamentos[] = {' ','\n','=','<','>','(',')','*','/','+','-','^',';',':','.',',',']'};
+	for (size_t i=0; i<17;i++)
+	{
+		if (c == possíveis_fechamentos[i])
+			return true;
+	}
+	return false;
+}
+
 
 Token proximo_token() {
 
@@ -301,7 +311,7 @@ Token proximo_token() {
 			case 9:
 				cont_sim_lido++;
 				c = code[cont_sim_lido];
-				if (!isalnum(c)) 
+				if (!isalnum(c) && c != '_') 
 					estado = 10;
 				else {
 					p_id++;
@@ -459,7 +469,8 @@ Token proximo_token() {
 			case 23:
 				cont_sim_lido++;
 				c = code[cont_sim_lido];
-				if (c == ' ' || c == '\n' || c == '=' || c == '<' || c == '>' || c == '(' || c == ')' || c == '*' || c == '/' || c == '+' || c == '-' || c == '^' || c == ';' || c == ':' || c == '.' || c == ',' || c == ']')
+				bool checar_numero = checar_formacao_num(c);
+				if (checar_numero)
 					estado=24;
 				else if (isdigit(c)) {
 					p_num++;
@@ -474,7 +485,7 @@ Token proximo_token() {
 					break;
 				}
 				break;
-			case 24: // TODO: Adicionar um case para caso o número seja muito longo retornar problema
+			case 24: // NOTA: Caso o número seja muito longo dá problema
 				p_num++;
 				num_str[p_num] = '\0';
 
