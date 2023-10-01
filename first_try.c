@@ -126,10 +126,10 @@ bool table_check(char* word, int *se_existe_pos) {
 }
 
 bool checar_formacao_num(char c) {
-	char possíveis_fechamentos[] = {' ','\n','=','<','>','(',')','*','/','+','-','^',';',':','.',',',']'};
+	char possiveis_fechamentos[] = {' ','\n','=','<','>','(',')','*','/','+','-','^',';',':','.',',',']'};
 	for (size_t i=0; i<17;i++)
 	{
-		if (c == possíveis_fechamentos[i])
+		if (c == possiveis_fechamentos[i])
 			return true;
 	}
 	return false;
