@@ -179,7 +179,7 @@ Token proximo_token() {
 				else if (c == '~') {estado = 3;break;}
 				
 				else {
-					printf("Erro léxico: Um caracter não reconhecido pela linguagem foi inserido");
+					printf("Erro léxico: Um caracter não reconhecido pela linguagem foi inserido\n");
 					token.nome_atributo = EOF;
 					token.atributo = -1;
 					code[cont_sim_lido] = '\0';
@@ -217,7 +217,7 @@ Token proximo_token() {
 					estado = 0;
 					return (token);
 				} else {
-					printf("Erro léxico: ~ deve ser sucedido de '='");
+					printf("Erro léxico: ~ deve ser sucedido de '='\n");
 					token.nome_atributo = EOF;
 					token.atributo = -1;
 					code[cont_sim_lido] = '\0'; 
@@ -292,7 +292,7 @@ Token proximo_token() {
 				p_id++;
 				id_str[p_id] = '\0';
 
-				// Checamos se a string é uma palavra reservada
+				
 				int pos;
 				bool isKeyword = keyword_check(id_str, &pos);
 				if (isKeyword){
@@ -395,7 +395,7 @@ Token proximo_token() {
 				return (token);
 				break;
 
-			case 22: // TODO: Adicionar else para caso a string não feche(tem que checar por fim de arquivo), subir um erro
+			case 22: 
 				cont_sim_lido++;
 				c = code[cont_sim_lido];
 				if (c == '"') {
@@ -409,6 +409,14 @@ Token proximo_token() {
 					cont_sim_lido++;
 					tabela_pointer++;
 					estado=0;
+					return (token);
+					break;
+
+				}else if (c == '\n') {
+					printf("Erro Léxico: String não terminada\n");
+					token.nome_atributo = EOF;
+					token.atributo = -1;
+					code[cont_sim_lido] = '\0';
 					return (token);
 					break;
 
@@ -429,7 +437,7 @@ Token proximo_token() {
 					num_str[p_num] = c;
 					estado=23;
 				} else {
-					printf("Erro Léxico: má formação do inteiro");
+					printf("Erro Léxico: má formação do inteiro\n");
 					token.nome_atributo = EOF;
 					token.atributo = -1;
 					code[cont_sim_lido] = '\0';
