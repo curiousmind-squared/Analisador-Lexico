@@ -27,7 +27,7 @@
 
 #define RESERVEDKEYWORDS 21
 
-// FIXME: Essa númeração é temporária, quando ajeitarmos os cases e a númeração dos tokens ajeitamos isso 
+
 #define BASECASEFORKEYWORDS 300
 
 typedef struct {
@@ -103,6 +103,18 @@ bool keyword_check(char* word, int *pos) {
 	return false;
 }
 
+bool table_check(char* word, int *se_existe_pos) {
+	for (size_t i=(RESERVEDKEYWORDS+1); i<tabela_pointer; i++){
+		if (strcmp(word, tabela[i]) == 0){
+			*se_existe_pos = i;
+			return true;
+		}
+	}
+	*se_existe_pos = -1;
+	return false;
+}
+
+
 Token proximo_token() {
 
 	Token token;
@@ -123,7 +135,7 @@ Token proximo_token() {
 			case 0:
 				c = code[cont_sim_lido];
 				
-				if ((c == ' ')||(c == '\n'))
+				if ((c == ' ')||(c == '\n') || iscntrl(c))
 				{
 					estado=0;
 					cont_sim_lido++;
@@ -294,11 +306,18 @@ Token proximo_token() {
 
 				
 				int pos;
+				int se_existe_pos;
 				bool isKeyword = keyword_check(id_str, &pos);
+				bool isOnTable = table_check(id_str, &se_existe_pos); // Caso em que o id já existe na tabela
 				if (isKeyword){
 					printf("<%s, %d>\n", id_str, pos);
 					token.nome_atributo = BASECASEFORKEYWORDS + pos;
 					token.nome_atributo = pos;
+
+				} else if (isOnTable) {
+					printf("<ID, %d>\n", se_existe_pos);
+					token.nome_atributo = ID;
+					token.atributo = se_existe_pos;
 
 				}	
 				else {
