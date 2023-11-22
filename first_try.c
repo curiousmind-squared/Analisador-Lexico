@@ -282,6 +282,7 @@ Token proximo_token() {
 					return (token);
 				} else {  
 					printf("<atribuição>\n");
+					c = '=';
 					token.nome_atributo = c;
 					estado=0; 
 					return (token);
